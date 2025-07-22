@@ -47,7 +47,7 @@ typedef void *(*pfn_co_routine_t)( void * );
 
 int 	co_create( stCoRoutine_t **co,const stCoRoutineAttr_t *attr,void *(*routine)(void*),void *arg );
 void    co_resume( stCoRoutine_t *co );
-void    co_yield( stCoRoutine_t *co );
+void    co_yield_( stCoRoutine_t *co );
 void    co_yield_ct(); //ct = current thread
 void    co_release( stCoRoutine_t *co );
 void    co_reset(stCoRoutine_t * co); 

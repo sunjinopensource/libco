@@ -639,7 +639,7 @@ void co_yield_ct()
 
 	co_yield_env( co_get_curr_thread_env() );
 }
-void co_yield( stCoRoutine_t *co )
+void co_yield_( stCoRoutine_t *co )
 {
 	co_yield_env( co->env );
 }
