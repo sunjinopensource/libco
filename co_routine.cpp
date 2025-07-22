@@ -277,6 +277,14 @@ void *mmap_alloc(size_t length) {
     return NULL;
   }
 
+  // 填充magic
+  char magic[] = "LibCoStackProtect";
+  for (int i = 0; i < kPageSize; ++i) {
+    char c = magic[i % (sizeof(magic) - 1)];
+    addr[i] = c;
+    addr[i + kPageSize + length] = c;
+  }
+
   mprotect(addr, kPageSize, PROT_NONE);
   mprotect(addr + length + kPageSize, kPageSize, PROT_NONE);
   return addr + kPageSize;
