@@ -44,6 +44,7 @@ int main()
 extern int 	co_setspecific( pthread_key_t key, const void *value );
 extern void *	co_getspecific( pthread_key_t key );
 
+#if 0
 #define CO_ROUTINE_SPECIFIC( name,y ) \
 \
 static pthread_once_t _routine_once_##name = PTHREAD_ONCE_INIT; \
@@ -84,3 +85,38 @@ public:\
 \
 static clsRoutineData_routine_##name<name> y;
 
+#else
+
+template <class T>
+class clsCoSpecificData {
+ public:
+  T* operator->() {
+    T* p = static_cast<T*>(co_getspecific(key_));
+    if (p != NULL) {
+      return p;
+    }
+
+    p = static_cast<T*>(calloc(1, sizeof(T)));
+    int err = co_setspecific(key_, p);
+    if (err == 0) {
+      return p;
+    }
+    
+    free(p);
+    return NULL;
+  }
+
+  static clsCoSpecificData& GetInstance() {
+    static clsCoSpecificData instance;
+    return instance;
+  }
+
+ private:
+  clsCoSpecificData() { pthread_key_create(&key_, NULL); }
+
+  pthread_key_t key_;
+};
+
+#define CO_ROUTINE_SPECIFIC(Cls, var)  static clsCoSpecificData<Cls>& var = clsCoSpecificData<Cls>::GetInstance();
+
+#endif
